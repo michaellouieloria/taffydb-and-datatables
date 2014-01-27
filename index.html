@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">      
+        <title>DataTables and TaffyDB</title>
+        <link type="text/css" rel="stylesheet" href="css/demo_page.css"/>
+        <link type="text/css" rel="stylesheet" href="css/demo_table.css"/>      
+        <script type="text/javascript" src="js/jquery.js"></script>
+        <script type="text/javascript" src="js/jquery.dataTables.js"></script>
+        <script type="text/javascript" src="js/taffy.js"></script>
+        <script type="text/javascript" charset="utf-8">
+            var cities = TAFFY();
+            cities.store("cities")
+
+            function get_cities() {
+                rows = new Array();
+                cities().each(function (r) {
+                    rows.push([r.name, r.state, '<a href="#" class="edit" data-id="' + r.___id + '">Edit</a>&nbsp;&nbsp;&nbsp<a href="#" class="delete" data-id="' + r.___id + '">Delete</a>']);
+                });
+
+                return rows;
+            }
+
+            function refresh() {
+                location.reload();
+            }
+
+            $(document).ready(function() {
+                $('#dynamic').html( '<table cellpadding="0" cellspacing="0" border="0" class="display" id="example"></table>' );
+                $('#example').dataTable( {
+                    "aaData": get_cities(),
+                    "aoColumns": [
+                        { "sTitle": "Name" },
+                        { "sTitle": "State" },
+                        { "sTitle": "Actions", "sClass": "center" }
+                    ]
+                } );
+
+                $("#add").click(function(e) {  
+                    cities.insert({name:$("#add_name").val(),state:$("#add_state").val()});
+                    refresh();
+                    
+                    $("#add_name").val('')
+                    $("#add_state").val('')                    
+                    return false;
+                });
+                
+                $(".edit").click(function(e) {  
+                    city = cities($(this).data("id")).get();
+                    console.log($(this).data("id"));
+                    $("#edit_id").val(city[0].___id);
+                    $("#edit_name").val(city[0].name);
+                    $("#edit_state").val(city[0].state);
+
+                    return false;
+                });
+                
+                $("#edit").click(function(e) {  
+                    cities($("#edit_id").val()).update({name:$("#edit_name").val(),state:$("#edit_state").val()});
+                    refresh();
+                    
+                    $("#edit_id").val('')
+                    $("#edit_name").val('')
+                    $("#edit_state").val('')
+                    return false;
+                });
+                
+                $(".delete").click(function() {  
+                    cities($(this).data("id")).remove();
+                    refresh();
+                    return false;
+                });                
+            } );
+        </script>
+    </head>
+    <body id="dt_example">
+        <div id="container">
+            <div class="full_width big">
+                DataTable and TaffyDB
+            </div>
+
+            <h1>Live example</h1>
+            <div id="dynamic"></div>
+            <div class="spacer"></div>
+
+            <h1>Add</h1>
+            <form>  
+                <fieldset>  
+                    <label for="add_name">Name</label>  
+                    <input type="text" name="add_name" id="add_name" size="30" value="" class="text-input" />  
+
+                    <label for="add_state">State</label>  
+                    <input type="text" name="add_state" id="add_state" size="30" value="" class="text-input" />  
+
+                    <br />  
+                    <input type="submit" name="submit" id="add" value="Add" />  
+              </fieldset>  
+            </form>
+            <div class="spacer"></div>
+            
+            <h1>Edit</h1>
+            <form>  
+                <fieldset>
+                    <input type="hidden" name="edit_id" id="edit_id" value="" />
+                    <label for="edit_name">Name</label>  
+                    <input type="text" name="edit_name" id="edit_name" size="30" value="" class="text-input" />  
+
+                    <label for="edit_state">State</label>  
+                    <input type="text" name="edit_state" id="edit_state" size="30" value="" class="text-input" />  
+
+                    <br />  
+                    <input type="submit" name="submit" id="edit" value="Edit" />  
+              </fieldset>
+            </form>
+
+        </div>
+    </body>
+</html>

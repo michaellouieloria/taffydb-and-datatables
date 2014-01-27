@@ -1,4 +1,4 @@
-taffydb-and-datatables
+TaffyDB and DataTables
 ======================
 
-TaffyDB and DataTables sample
+[TaffyDB](http://www.taffydb.com/) and [DataTables](http://datatables.net/) sample
